@@ -271,7 +271,8 @@ const safeJSONParse = (value) => {
 // API ENDPOINTS
 // ============================================
 
-// 1. Register user
+
+// 1. Register user with date-based re-entry support
 app.post('/api/register', async (req, res) => {
   try {
     const { fullName, phoneNumber, email } = req.body;
@@ -286,20 +287,104 @@ app.post('/api/register', async (req, res) => {
       });
     }
     
+    // Check if user exists
     const [existing] = await pool.query(
-      'SELECT user_id FROM users WHERE phone_number = ?',
+      'SELECT user_id, full_name, email, created_at, exam_started, exam_completed FROM users WHERE phone_number = ?',
       [phoneNumber]
     );
     
+    // If user exists, check if it's the same day
     if (existing.length > 0) {
-      logger.warn(`Registration failed: User already exists (${phoneNumber})`);
-      return res.status(400).json({ 
-        success: false, 
-        message: 'User already registered',
-        userId: existing[0].user_id
-      });
+      const user = existing[0];
+      const createdAt = new Date(user.created_at);
+      const today = new Date();
+      
+      // Compare dates (year, month, day only)
+      const isSameDay = 
+        createdAt.getFullYear() === today.getFullYear() &&
+        createdAt.getMonth() === today.getMonth() &&
+        createdAt.getDate() === today.getDate();
+      
+      // If same day, allow re-entry (resume exam)
+      if (isSameDay) {
+        logger.info(`Re-entry: User already registered today (${phoneNumber})`);
+        
+        // Check if user already has an active session
+        const [activeSession] = await pool.query(
+          'SELECT session_token FROM exam_sessions WHERE user_id = ? AND is_active = TRUE',
+          [user.user_id]
+        );
+        
+        let sessionToken;
+        if (activeSession.length > 0) {
+          // Reuse existing active session
+          sessionToken = activeSession[0].session_token;
+          logger.info(`Reusing existing session for user ${user.user_id}`);
+        } else {
+          // Create new session
+          sessionToken = uuidv4();
+          const ipAddress = req.ip || req.connection.remoteAddress;
+          const userAgent = req.headers['user-agent'];
+          
+          await pool.query(
+            `INSERT INTO exam_sessions (user_id, session_token, ip_address, user_agent) 
+             VALUES (?, ?, ?, ?)`,
+            [user.user_id, sessionToken, ipAddress, userAgent]
+          );
+          logger.info(`New session created for user ${user.user_id}`);
+        }
+        
+        return res.status(200).json({
+          success: true,
+          message: 'Welcome back! Resuming your exam.',
+          userId: user.user_id,
+          sessionToken: sessionToken,
+          fullName: user.full_name,
+          isReentry: true,
+          examCompleted: user.exam_completed === 1,
+          examStarted: user.exam_started === 1,
+        });
+      } else {
+        // Different day - allow new registration
+        logger.info(`User exists but from different day. Creating new registration for: ${phoneNumber}`);
+        
+        // Generate new user ID
+        const userId = `CRS${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        
+        // Insert new user (with updated date)
+        await pool.query(
+          `INSERT INTO users (user_id, full_name, phone_number, email, exam_started) 
+           VALUES (?, ?, ?, ?, TRUE)`,
+          [userId, fullName, phoneNumber, email || null]
+        );
+        
+        // Create new session
+        const sessionToken = uuidv4();
+        const ipAddress = req.ip || req.connection.remoteAddress;
+        const userAgent = req.headers['user-agent'];
+        
+        await pool.query(
+          `INSERT INTO exam_sessions (user_id, session_token, ip_address, user_agent) 
+           VALUES (?, ?, ?, ?)`,
+          [userId, sessionToken, ipAddress, userAgent]
+        );
+        
+        logger.info(`New registration successful for different day: ${fullName} (${userId})`);
+        
+        return res.status(201).json({
+          success: true,
+          message: 'Registration successful',
+          userId: userId,
+          sessionToken: sessionToken,
+          fullName: fullName,
+          isReentry: false,
+          isNewDay: true,
+        });
+      }
     }
     
+    // --- NEW USER ---
+    // Generate unique user ID
     const userId = `CRS${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     
     await pool.query(
@@ -325,7 +410,9 @@ app.post('/api/register', async (req, res) => {
       message: 'Registration successful',
       userId: userId,
       sessionToken: sessionToken,
-      fullName: fullName
+      fullName: fullName,
+      isReentry: false,
+      isNewDay: false,
     });
     
   } catch (error) {
@@ -407,7 +494,8 @@ app.post('/api/questions', async (req, res) => {
       fullName: user[0]?.full_name || '',
       examCompleted: user[0]?.exam_completed || false,
       totalQuestions: questions.length,
-      total_time: 7200, // this is in seconds...
+      total_time: 1800, // this is in seconds...
+      show_result: true,
       questions: formattedQuestions
     });
     

@@ -763,6 +763,341 @@
         }
 
         /* ============================================
+           TIME UP MODAL
+           ============================================ */
+        .timeup-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            backdrop-filter: blur(6px);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .timeup-modal-overlay.active {
+            display: flex;
+        }
+
+        .timeup-modal {
+            background: var(--primary-white);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 92%;
+            padding: 45px 35px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .timeup-modal .icon-clock {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .timeup-modal h2 {
+            color: #e53935;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .timeup-modal p {
+            color: var(--text-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .timeup-modal .timeup-details {
+            background: #fef3f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #e53935;
+            text-align: left;
+        }
+
+        .timeup-modal .timeup-details p {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .timeup-modal .btn-timeup {
+            padding: 14px 50px;
+            background: #e53935;
+            color: var(--primary-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-main);
+            margin-top: 10px;
+        }
+
+        .timeup-modal .btn-timeup:hover {
+            background: #c62828;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3);
+        }
+
+        /* ============================================
+           RE-ENTRY MODAL
+           ============================================ */
+        .reentry-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .reentry-modal-overlay.active {
+            display: flex;
+        }
+
+        .reentry-modal {
+            background: var(--primary-white);
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 92%;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reentry-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--primary-green));
+        }
+
+        .reentry-modal h2 {
+            color: var(--primary-green);
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .reentry-modal p {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .reentry-modal .reentry-details {
+            background: var(--light-green);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .reentry-modal .reentry-details p {
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+            color: var(--text-dark);
+        }
+
+        .reentry-modal .btn-reentry {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: var(--primary-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-main);
+            margin-top: 10px;
+        }
+
+        .reentry-modal .btn-reentry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 107, 63, 0.3);
+        }
+
+        /* ============================================
+           RESULTS DISPLAY MODAL (When show_result = true)
+           ============================================ */
+        .results-display-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10002;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .results-display-modal-overlay.active {
+            display: flex;
+        }
+
+        .results-display-modal {
+            background: var(--primary-white);
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .results-display-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--primary-green));
+        }
+
+        .results-display-modal h2 {
+            color: var(--primary-green);
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .results-display-modal .sub-title {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .results-display-modal .result-score {
+            text-align: center;
+            padding: 20px;
+            background: var(--light-green);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+
+        .results-display-modal .result-score .score-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary-green);
+        }
+
+        .results-display-modal .result-score .score-label {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .results-display-modal .result-status {
+            display: inline-block;
+            padding: 6px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 8px;
+        }
+
+        .results-display-modal .result-status.passed {
+            background: var(--primary-green);
+            color: var(--primary-white);
+        }
+
+        .results-display-modal .result-status.failed {
+            background: #e53935;
+            color: var(--primary-white);
+        }
+
+        .results-display-modal .result-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .results-display-modal .result-detail-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .results-display-modal .result-detail-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .results-display-modal .result-detail-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 2px;
+        }
+
+        .results-display-modal .btn-close-results {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: var(--primary-white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-main);
+            margin-top: 10px;
+        }
+
+        .results-display-modal .btn-close-results:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 107, 63, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .results-display-modal .result-details-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .results-display-modal {
+                padding: 25px 18px;
+            }
+            .results-display-modal .result-score .score-number {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* ============================================
            LOADING / OVERLAY
            ============================================ */
         .loading-overlay {
@@ -874,11 +1209,14 @@
                 font-size: 0.75rem;
             }
 
-            .success-modal {
+            .success-modal,
+            .timeup-modal,
+            .reentry-modal {
                 padding: 30px 20px;
             }
 
-            .success-modal h2 {
+            .success-modal h2,
+            .timeup-modal h2 {
                 font-size: 1.3rem;
             }
         }
@@ -944,6 +1282,24 @@
             .success-modal {
                 box-shadow: none !important;
                 border: 2px solid #ddd !important;
+            }
+            .timeup-modal-overlay {
+                display: none !important;
+            }
+            .reentry-modal-overlay {
+                display: none !important;
+            }
+            .results-display-modal-overlay {
+                position: static !important;
+                background: none !important;
+                backdrop-filter: none !important;
+                display: block !important;
+            }
+            .results-display-modal {
+                box-shadow: none !important;
+                border: 2px solid #ddd !important;
+                max-height: none !important;
+                overflow: visible !important;
             }
         }
 
@@ -1011,6 +1367,93 @@
     </div>
 
     <!-- ============================================
+    RESULTS DISPLAY MODAL (When show_result = true)
+    ============================================ -->
+    <div class="results-display-modal-overlay" id="resultsDisplayModal">
+        <div class="results-display-modal">
+            <div style="text-align:center; margin-bottom:10px;">
+                <img id="resultsLogo" src="" alt="CRS Logo" style="width:60px;height:60px;object-fit:contain;" />
+            </div>
+            <h2>Examination Results</h2>
+            <p class="sub-title">Cross River State Civil Service - Promotion Assessment</p>
+
+            <div class="result-score">
+                <div class="score-number" id="resultScoreNumber">0</div>
+                <div class="score-label">out of <span id="resultTotalMarks">0</span> marks</div>
+                <div class="result-status" id="resultStatus">PASSED</div>
+            </div>
+
+            <div class="result-details-grid">
+                <div class="result-detail-item">
+                    <div class="label">Percentage</div>
+                    <div class="value" id="resultPercentage">0%</div>
+                </div>
+                <div class="result-detail-item">
+                    <div class="label">Questions Answered</div>
+                    <div class="value" id="resultAnswered">0</div>
+                </div>
+                <div class="result-detail-item">
+                    <div class="label">Total Questions</div>
+                    <div class="value" id="resultTotalQuestions">0</div>
+                </div>
+                <div class="result-detail-item">
+                    <div class="label">Pass Mark</div>
+                    <div class="value">60%</div>
+                </div>
+            </div>
+
+            <div style="margin-top:15px; padding-top:15px; border-top:1px solid #e8e8e8;">
+                <p style="font-size:0.8rem; color:var(--text-gray); text-align:center;">
+                    📧 A copy of these results has been sent to your registered email.
+                </p>
+            </div>
+
+            <button class="btn-close-results" id="resultsCloseBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+    TIME UP MODAL
+    ============================================ -->
+    <div class="timeup-modal-overlay" id="timeupModal">
+        <div class="timeup-modal">
+            <span class="icon-clock">⏰</span>
+            <h2>Time is Up!</h2>
+            <p>Your examination time has expired.</p>
+            <p style="font-size:0.9rem;color:var(--text-gray);">We are submitting your exam automatically.</p>
+
+            <div class="timeup-details">
+                <p><strong>📌 Candidate:</strong> <span id="timeupCandidateName">—</span></p>
+                <p><strong>📌 ID:</strong> <span id="timeupCandidateId">—</span></p>
+                <p><strong>📌 Questions Attempted:</strong> <span id="timeupAttempted">0</span> of <span id="timeupTotal">0</span></p>
+            </div>
+
+            <p style="font-size:0.85rem;color:var(--text-gray);">Your answers have been saved. Results will be sent to your email.</p>
+            <button class="btn-timeup" id="timeupCloseBtn">Continue</button>
+        </div>
+    </div>
+
+    <!-- ============================================
+    RE-ENTRY MODAL
+    ============================================ -->
+    <div class="reentry-modal-overlay" id="reentryModal">
+        <div class="reentry-modal">
+            <div style="font-size:3rem; margin-bottom:10px;">🔄</div>
+            <h2>Welcome Back!</h2>
+            <p>You already have an active exam session. We'll pick up where you left off.</p>
+
+            <div class="reentry-details">
+                <p><strong>👤 Name:</strong> <span id="reentryName">—</span></p>
+                <p><strong>🆔 ID:</strong> <span id="reentryUserId">—</span></p>
+                <p><strong>📧 Email:</strong> <span id="reentryEmail">—</span></p>
+            </div>
+
+            <p style="font-size:0.85rem;color:var(--text-gray);">Click below to resume your examination.</p>
+            <button class="btn-reentry" id="reentryCloseBtn">Resume Examination</button>
+        </div>
+    </div>
+
+    <!-- ============================================
     MAIN CONTAINER
     ============================================ -->
     <div class="exam-container" id="examContainer">
@@ -1021,7 +1464,7 @@
         <header class="exam-header">
             <div class="header-left">
                 <div class="header-logo">
-                    <img src="../images.png" alt="CRS Logo" />
+                    <img id="headerLogo" src="" alt="CRS Logo" />
                 </div>
                 <div class="header-title">
                     <h1>Promotion Examination</h1>
@@ -1082,7 +1525,7 @@
             ========================================== -->
             <div class="registration-section" id="registrationSection">
                 <div class="logo-large">
-                    <img src="../images.png" alt="CRS Logo" />
+                    <img id="logoLarge" src="" alt="CRS Logo" />
                 </div>
                 <h2>Welcome to the Examination</h2>
                 <p class="sub-text">Please register to begin your promotion assessment</p>
@@ -1172,19 +1615,34 @@
     ============================================ -->
     <script>
         // ============================================
-        // CONFIGURATION
+        // CONFIGURATION - Auto-detect API base
         // ============================================
-        const CONFIG = {
-            API_BASE: 'http://localhost:5000/api',
-            // AUTO_SAVE_INTERVAL: 30000, // 30 seconds
-            // BULK_SAVE_INTERVAL: 60000, // 60 seconds (every minute)
-            AUTO_SAVE_INTERVAL: 120000, // 120 seconds
-            BULK_SAVE_INTERVAL: 1440000, // 1440 seconds (every minute)
+        const getApiBase = () => {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:5000/api';
+            }
+            return `http://${hostname}:5000/api`;
+        };
 
+        const getLogoPath = () => {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return '/images.png';
+            }
+            return `http://${hostname}/images.png`;
+        };
+
+        const CONFIG = {
+            API_BASE: getApiBase(),
+            AUTO_SAVE_INTERVAL: 120000,
+            BULK_SAVE_INTERVAL: 1440000,
             CHUNK_SIZE: 50,
-            ENABLE_TOOLS: true, // Set to false to disable accessibility tools
+            ENABLE_TOOLS: true,
             ENABLE_AUTO_SAVE: true,
-            MAX_BULK_SAVES: 5, // Maximum number of bulk saves during exam
+            MAX_BULK_SAVES: 5,
         };
 
         // ============================================
@@ -1199,12 +1657,16 @@
             currentIndex: 0,
             answers: {},
             examCompleted: false,
-            totalTime: 1800, // seconds (default 30 min)
+            totalTime: 7200,
             timerInterval: null,
             timeRemaining: 0,
             bulkSaveCount: 0,
             isSubmitting: false,
             registrationSubmitted: false,
+            isReentry: false,
+            timeUpSubmitted: false,
+            showResult: false, // From API response
+            resultData: null, // Store result data if show_result = true
         };
 
         // ============================================
@@ -1242,12 +1704,35 @@
             prevBtn: $('prevBtn'),
             nextBtn: $('nextBtn'),
             submitBtn: $('submitBtn'),
-            // Modal
+            // Success Modal
             successModal: $('successModal'),
             modalCandidateName: $('modalCandidateName'),
             modalCandidateId: $('modalCandidateId'),
             modalCandidateEmail: $('modalCandidateEmail'),
             modalCloseBtn: $('modalCloseBtn'),
+            // Results Display Modal
+            resultsDisplayModal: $('resultsDisplayModal'),
+            resultsLogo: $('resultsLogo'),
+            resultScoreNumber: $('resultScoreNumber'),
+            resultTotalMarks: $('resultTotalMarks'),
+            resultStatus: $('resultStatus'),
+            resultPercentage: $('resultPercentage'),
+            resultAnswered: $('resultAnswered'),
+            resultTotalQuestions: $('resultTotalQuestions'),
+            resultsCloseBtn: $('resultsCloseBtn'),
+            // Time Up Modal
+            timeupModal: $('timeupModal'),
+            timeupCandidateName: $('timeupCandidateName'),
+            timeupCandidateId: $('timeupCandidateId'),
+            timeupAttempted: $('timeupAttempted'),
+            timeupTotal: $('timeupTotal'),
+            timeupCloseBtn: $('timeupCloseBtn'),
+            // Re-entry Modal
+            reentryModal: $('reentryModal'),
+            reentryName: $('reentryName'),
+            reentryUserId: $('reentryUserId'),
+            reentryEmail: $('reentryEmail'),
+            reentryCloseBtn: $('reentryCloseBtn'),
             // Toolbar
             zoomInBtn: $('zoomInBtn'),
             zoomOutBtn: $('zoomOutBtn'),
@@ -1257,7 +1742,20 @@
             resetFontBtn: $('resetFontBtn'),
             highContrastBtn: $('highContrastBtn'),
             printBtn: $('printBtn'),
+            headerLogo: $('headerLogo'),
+            logoLarge: $('logoLarge'),
         };
+
+        // ============================================
+        // SET LOGO PATHS
+        // ============================================
+        const LOGO_PATH = getLogoPath();
+        dom.headerLogo.src = LOGO_PATH;
+        dom.logoLarge.src = LOGO_PATH;
+        dom.resultsLogo.src = LOGO_PATH;
+
+        console.log('📷 Logo path:', LOGO_PATH);
+        console.log('🌐 API Base:', CONFIG.API_BASE);
 
         // ============================================
         // TOOLBAR FUNCTIONS
@@ -1312,7 +1810,6 @@
                 window.print();
             });
         } else {
-            // Hide toolbar if disabled
             document.getElementById('toolbar').style.display = 'none';
         }
 
@@ -1344,19 +1841,86 @@
             document.body.style.overflow = '';
         }
 
-        dom.modalCloseBtn.addEventListener('click', hideSuccessModal);
+        // ============================================
+        // RESULTS DISPLAY MODAL (show_result = true)
+        // ============================================
+        function showResultsModal(resultData) {
+            dom.resultScoreNumber.textContent = resultData.totalScore || 0;
+            dom.resultTotalMarks.textContent = resultData.totalMarks || 0;
+            dom.resultPercentage.textContent = (resultData.percentageScore || 0) + '%';
+            dom.resultTotalQuestions.textContent = resultData.totalQuestions || 0;
+            dom.resultAnswered.textContent = resultData.answeredCount || 0;
 
-        // Close modal on overlay click
-        dom.successModal.addEventListener('click', (e) => {
-            if (e.target === dom.successModal) {
-                hideSuccessModal();
-            }
+            const passed = resultData.passStatus || false;
+            dom.resultStatus.textContent = passed ? '✅ PASSED' : '❌ FAILED';
+            dom.resultStatus.className = `result-status ${passed ? 'passed' : 'failed'}`;
+
+            dom.resultsDisplayModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideResultsModal() {
+            dom.resultsDisplayModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showTimeUpModal(name, userId, attempted, total) {
+            dom.timeupCandidateName.textContent = name || '—';
+            dom.timeupCandidateId.textContent = userId || '—';
+            dom.timeupAttempted.textContent = attempted || 0;
+            dom.timeupTotal.textContent = total || 0;
+            dom.timeupModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideTimeUpModal() {
+            dom.timeupModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showReentryModal(name, userId, email) {
+            dom.reentryName.textContent = name || '—';
+            dom.reentryUserId.textContent = userId || '—';
+            dom.reentryEmail.textContent = email || '—';
+            dom.reentryModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideReentryModal() {
+            dom.reentryModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Modal close handlers
+        dom.modalCloseBtn.addEventListener('click', hideSuccessModal);
+        dom.resultsCloseBtn.addEventListener('click', hideResultsModal);
+        dom.timeupCloseBtn.addEventListener('click', hideTimeUpModal);
+        dom.reentryCloseBtn.addEventListener('click', () => {
+            hideReentryModal();
+            resumeExam();
         });
 
-        // Close modal with Escape key
+        // Close modals on overlay click
+        dom.successModal.addEventListener('click', (e) => {
+            if (e.target === dom.successModal) hideSuccessModal();
+        });
+        dom.resultsDisplayModal.addEventListener('click', (e) => {
+            if (e.target === dom.resultsDisplayModal) hideResultsModal();
+        });
+        dom.timeupModal.addEventListener('click', (e) => {
+            if (e.target === dom.timeupModal) hideTimeUpModal();
+        });
+        dom.reentryModal.addEventListener('click', (e) => {
+            if (e.target === dom.reentryModal) hideReentryModal();
+        });
+
+        // Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && dom.successModal.classList.contains('active')) {
-                hideSuccessModal();
+            if (e.key === 'Escape') {
+                if (dom.successModal.classList.contains('active')) hideSuccessModal();
+                if (dom.resultsDisplayModal.classList.contains('active')) hideResultsModal();
+                if (dom.timeupModal.classList.contains('active')) hideTimeUpModal();
+                if (dom.reentryModal.classList.contains('active')) hideReentryModal();
             }
         });
 
@@ -1461,10 +2025,24 @@
                 state.fullName = result.fullName;
                 state.email = email;
 
+                // Store credentials for re-entry
+                localStorage.setItem('crs_user_id', state.userId);
+                localStorage.setItem('crs_session_token', state.sessionToken);
+
                 // Show user info
                 dom.userName.textContent = result.fullName;
                 dom.userIdDisplay.textContent = result.userId;
                 dom.userInfo.style.display = 'block';
+
+                // If re-entry, check if exam was already completed
+                if (result.isReentry && result.examCompleted) {
+                    hideLoading();
+                    alert('You have already completed this exam. Results will be sent to your email.');
+                    state.registrationSubmitted = false;
+                    dom.registerBtn.disabled = false;
+                    dom.registerBtn.textContent = 'Start Examination';
+                    return;
+                }
 
                 // Load questions
                 await loadQuestions();
@@ -1484,6 +2062,13 @@
                 // Show first question
                 renderQuestion(0);
 
+                // If re-entry, show welcome back message
+                if (result.isReentry) {
+                    setTimeout(() => {
+                        alert(`Welcome back, ${result.fullName}! Resuming your exam.`);
+                    }, 500);
+                }
+
                 hideLoading();
 
             } catch (error) {
@@ -1491,9 +2076,56 @@
                 state.registrationSubmitted = false;
                 dom.registerBtn.disabled = false;
                 dom.registerBtn.textContent = 'Start Examination';
-                alert(`Registration failed: ${error.message}`);
+
+                if (error.message && error.message.includes('already registered')) {
+                    // Show re-entry modal with user info
+                    showReentryModal(
+                        dom.fullName.value.trim() || 'User',
+                        'Existing User',
+                        dom.email.value.trim() || '—'
+                    );
+                } else {
+                    alert(`Registration failed: ${error.message}`);
+                }
             }
         });
+        // ============================================
+        // RESUME EXAM (Re-entry)
+        // ============================================
+        async function resumeExam() {
+            try {
+                showLoading('Resuming your exam...');
+
+                const storedUserId = localStorage.getItem('crs_user_id');
+                const storedSessionToken = localStorage.getItem('crs_session_token');
+
+                if (storedUserId && storedSessionToken) {
+                    state.userId = storedUserId;
+                    state.sessionToken = storedSessionToken;
+                    state.fullName = dom.fullName.value.trim();
+                    state.email = dom.email.value.trim();
+
+                    dom.userName.textContent = state.fullName;
+                    dom.userIdDisplay.textContent = state.userId;
+                    dom.userInfo.style.display = 'block';
+
+                    await loadQuestions();
+                    dom.registrationSection.style.display = 'none';
+                    dom.questionsSection.classList.add('active');
+                    startTimer();
+                    if (CONFIG.ENABLE_AUTO_SAVE) startAutoSave();
+                    renderQuestion(0);
+                    hideLoading();
+                } else {
+                    hideLoading();
+                    alert('Please contact support to resume your exam. Your session could not be recovered.');
+                }
+
+            } catch (error) {
+                hideLoading();
+                alert(`Could not resume exam: ${error.message}`);
+            }
+        }
 
         // ============================================
         // LOAD QUESTIONS
@@ -1504,10 +2136,15 @@
                 sessionToken: state.sessionToken,
             });
 
+            // Store credentials for re-entry
+            localStorage.setItem('crs_user_id', state.userId);
+            localStorage.setItem('crs_session_token', state.sessionToken);
+
             state.questions = result.questions || [];
-            state.totalTime = result.total_time || 1800;
+            state.totalTime = result.total_time || 7200;
             state.timeRemaining = state.totalTime;
             state.answers = {};
+            state.showResult = result.show_result || false;
 
             // Load existing answers
             state.questions.forEach(q => {
@@ -1519,6 +2156,8 @@
             // Update UI
             dom.totalQCount.textContent = state.questions.length;
             updateProgress();
+
+            console.log(`📊 Show result: ${state.showResult}`);
         }
 
         // ============================================
@@ -1613,17 +2252,14 @@
                         this.classList.remove('answered');
                     }
 
-                    // Debounced save
                     clearTimeout(timeout);
                     timeout = setTimeout(() => {
                         handleTextAnswer(qid, this.value);
                     }, 500);
 
-                    // Update answered count
                     updateAnsweredCount();
                 });
 
-                // Save on blur (immediate)
                 ta.addEventListener('blur', function() {
                     const qid = parseInt(this.dataset.qid);
                     handleTextAnswer(qid, this.value);
@@ -1640,15 +2276,12 @@
         function handleObjectiveSelect(questionId, optionIndex) {
             state.answers[questionId] = String(optionIndex);
 
-            // Update UI
             document.querySelectorAll(`.option-item[data-qid="${questionId}"]`).forEach(el => {
                 el.classList.toggle('selected', parseInt(el.dataset.optindex) === optionIndex);
             });
 
             updateAnsweredCount();
             updateProgress();
-
-            // Save immediately for objective (lightweight)
             saveSingleAnswer(questionId, String(optionIndex));
         }
 
@@ -1656,7 +2289,6 @@
             state.answers[questionId] = value;
             updateAnsweredCount();
             updateProgress();
-            // Will be saved via auto-save or bulk
         }
 
         function countWords(text) {
@@ -1722,7 +2354,6 @@
             dom.questionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
@@ -1748,8 +2379,7 @@
 
                 if (state.timeRemaining <= 0) {
                     clearInterval(state.timerInterval);
-                    alert('Time is up! Your exam will be submitted automatically.');
-                    submitExam();
+                    handleTimeUp();
                 }
             }, 1000);
         }
@@ -1762,15 +2392,37 @@
             const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             dom.timerDisplay.textContent = timeStr;
 
-            // Warning when less than 5 minutes
             if (state.timeRemaining < 300) {
                 dom.timerDisplay.classList.add('warning');
             } else {
                 dom.timerDisplay.classList.remove('warning');
             }
 
-            // Show remaining time in question nav
             dom.remainingTime.textContent = `⏱️ ${timeStr} remaining`;
+        }
+
+        // ============================================
+        // HANDLE TIME UP
+        // ============================================
+        function handleTimeUp() {
+            if (state.timeUpSubmitted) return;
+            state.timeUpSubmitted = true;
+
+            const attempted = state.questions.filter(q => {
+                const answer = state.answers[q.id];
+                return answer && answer.trim().length > 0;
+            }).length;
+
+            showTimeUpModal(
+                state.fullName || '—',
+                state.userId || '—',
+                attempted,
+                state.questions.length
+            );
+
+            setTimeout(() => {
+                submitExam();
+            }, 1500);
         }
 
         // ============================================
@@ -1784,17 +2436,14 @@
             autoSaveInterval = setInterval(() => {
                 if (!state.questions.length || state.examCompleted) return;
                 if (state.bulkSaveCount >= CONFIG.MAX_BULK_SAVES) {
-                    // Fall back to individual saves if max bulk reached
                     saveAllAnswersIndividually();
                     return;
                 }
                 bulkSaveAnswers();
             }, CONFIG.BULK_SAVE_INTERVAL);
 
-            // Also save on page unload
             window.addEventListener('beforeunload', () => {
                 if (!state.examCompleted && state.questions.length) {
-                    // Try to save synchronously
                     navigator.sendBeacon(`${CONFIG.API_BASE}/bulk-save-answers`, JSON.stringify({
                         userId: state.userId,
                         sessionToken: state.sessionToken,
@@ -1818,7 +2467,6 @@
         async function bulkSaveAnswers() {
             const answers = getAnswersArray();
             if (answers.length === 0) return;
-
             if (state.bulkSaveCount >= CONFIG.MAX_BULK_SAVES) return;
 
             try {
@@ -1832,7 +2480,6 @@
                 console.log(`✅ Bulk save ${state.bulkSaveCount}/${CONFIG.MAX_BULK_SAVES} completed`);
             } catch (error) {
                 console.error('Bulk save failed:', error);
-                // Fall back to individual saves
                 saveAllAnswersIndividually();
             }
         }
@@ -1869,7 +2516,7 @@
                 return !answer || answer.trim().length === 0;
             });
 
-            if (unanswered.length > 0) {
+            if (unanswered.length > 0 && !state.timeUpSubmitted) {
                 const confirmSubmit = confirm(
                     `You have ${unanswered.length} unanswered question(s).\n\n` +
                     `Are you sure you want to submit?`
@@ -1883,7 +2530,6 @@
             showLoading('Submitting your exam...');
 
             try {
-                // Final bulk save
                 const answers = getAnswersArray();
                 if (answers.length > 0) {
                     await apiCall('/bulk-save-answers', {
@@ -1894,25 +2540,41 @@
                     });
                 }
 
-                // Submit exam
-                await apiCall('/submit-exam', {
+                const result = await apiCall('/submit-exam', {
                     userId: state.userId,
                     sessionToken: state.sessionToken,
                 });
 
                 state.examCompleted = true;
                 clearInterval(state.timerInterval);
-
                 hideLoading();
+                hideTimeUpModal();
 
-                // Show success modal instead of results
-                showSuccessModal(state.fullName, state.userId, state.email);
+                // Check if we should show results or just success modal
+                if (state.showResult) {
+                    // Get the result data from the submission response
+                    const resultData = {
+                        totalScore: result.totalScore || 0,
+                        totalMarks: result.totalMarks || 0,
+                        percentageScore: result.percentageScore || 0,
+                        passStatus: result.passStatus || false,
+                        totalQuestions: state.questions.length,
+                        answeredCount: state.questions.filter(q => {
+                            const a = state.answers[q.id];
+                            return a && a.trim().length > 0;
+                        }).length,
+                    };
+                    showResultsModal(resultData);
+                } else {
+                    // Show the standard success modal with email notification
+                    showSuccessModal(state.fullName, state.userId, state.email);
+                }
 
-                // Hide questions section
                 dom.questionsSection.classList.remove('active');
 
             } catch (error) {
                 hideLoading();
+                hideTimeUpModal();
                 alert(`Submission failed: ${error.message}`);
                 dom.submitBtn.disabled = false;
                 dom.submitBtn.textContent = '📤 Submit Exam';
@@ -1937,11 +2599,21 @@
         // ============================================
         // INIT
         // ============================================
-        console.log('🚀 CRS Civil Service Exam System v2.0');
+        console.log('🚀 CRS Civil Service Exam System v2.1');
         console.log(`📝 ${CONFIG.ENABLE_AUTO_SAVE ? 'Auto-save enabled' : 'Auto-save disabled'}`);
         console.log(`🔄 Bulk save interval: ${CONFIG.BULK_SAVE_INTERVAL / 1000}s`);
         console.log(`📦 Max bulk saves: ${CONFIG.MAX_BULK_SAVES}`);
         console.log(`🔧 Tools: ${CONFIG.ENABLE_TOOLS ? 'Enabled' : 'Disabled'}`);
+        console.log(`🌐 API Base: ${CONFIG.API_BASE}`);
+        console.log(`📷 Logo Path: ${LOGO_PATH}`);
+        console.log(`📊 Show results mode: Dynamic (based on API response)`);
+
+        const storedUserId = localStorage.getItem('crs_user_id');
+        const storedSessionToken = localStorage.getItem('crs_session_token');
+
+        if (storedUserId && storedSessionToken) {
+            console.log('🔄 Found stored credentials, ready for re-entry');
+        }
 
         console.log('✅ Ready');
     </script>
