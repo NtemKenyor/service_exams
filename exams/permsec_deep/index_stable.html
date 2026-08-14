@@ -85,11 +85,9 @@
             flex-shrink: 0;
         }
 
-        .header-logo img {
+        .header-logo svg {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 50%;
         }
 
         .header-title h1 {
@@ -250,10 +248,9 @@
             margin-bottom: 25px;
         }
 
-        .registration-section .logo-large img {
+        .registration-section .logo-large svg {
             width: 80px;
             height: 80px;
-            object-fit: contain;
         }
 
         .form-group {
@@ -607,159 +604,83 @@
         }
 
         /* ============================================
-           RESULTS SECTION (Hidden - replaced by modal)
+           RESULTS
            ============================================ */
         .results-section {
-            display: none !important;
-        }
-
-        /* ============================================
-           SUCCESS MODAL
-           ============================================ */
-        .success-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
             display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            backdrop-filter: blur(4px);
-            animation: fadeIn 0.3s ease;
+            padding: 20px 0;
         }
 
-        .success-modal-overlay.active {
-            display: flex;
+        .results-section.active {
+            display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .success-modal {
-            background: var(--primary-white);
+        .result-card {
+            background: linear-gradient(135deg, var(--light-green), var(--gold-light));
             border-radius: var(--radius);
-            max-width: 480px;
-            width: 92%;
-            padding: 40px 35px;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
+            border: 2px solid var(--primary-gold);
         }
 
-        .success-modal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary-green), var(--primary-gold));
-        }
-
-        .success-modal .modal-logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 15px;
-            background: var(--light-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-        }
-
-        .success-modal .modal-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .success-modal .check-icon {
-            width: 70px;
-            height: 70px;
-            background: var(--primary-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2.8rem;
-            color: var(--primary-white);
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .success-modal h2 {
+        .result-card .score-big {
+            font-size: 4rem;
+            font-weight: 800;
             color: var(--primary-green);
-            font-size: 1.6rem;
-            margin-bottom: 8px;
+            line-height: 1;
         }
 
-        .success-modal .sub-message {
-            color: var(--text-gray);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 5px;
-        }
-
-        .success-modal .highlight-text {
-            background: var(--gold-light);
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin: 18px 0;
-            border-left: 4px solid var(--primary-gold);
-            text-align: left;
-        }
-
-        .success-modal .highlight-text p {
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .success-modal .highlight-text .label {
-            font-weight: 600;
-            color: var(--primary-green);
-        }
-
-        .success-modal .modal-footer {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e8e8e8;
-        }
-
-        .success-modal .modal-footer p {
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            margin-bottom: 12px;
-        }
-
-        .success-modal .btn-modal {
-            padding: 12px 40px;
-            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
-            color: var(--primary-white);
-            border: none;
-            border-radius: 8px;
+        .result-card .score-label {
             font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            font-family: var(--font-main);
+            color: var(--text-gray);
+            margin-top: 5px;
         }
 
-        .success-modal .btn-modal:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 107, 63, 0.3);
+        .result-card .status {
+            display: inline-block;
+            padding: 8px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+
+        .result-card .status.passed {
+            background: var(--primary-green);
+            color: var(--primary-white);
+        }
+
+        .result-card .status.failed {
+            background: #e53935;
+            color: var(--primary-white);
+        }
+
+        .result-details {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .result-details .detail-item {
+            background: var(--primary-white);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .result-details .detail-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .result-details .detail-item .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 4px;
         }
 
         /* ============================================
@@ -845,6 +766,10 @@
                 font-size: 0.95rem;
             }
 
+            .result-card .score-big {
+                font-size: 3rem;
+            }
+
             .nav-buttons {
                 flex-direction: column;
                 align-items: stretch;
@@ -873,14 +798,6 @@
             .header-right .user-info {
                 font-size: 0.75rem;
             }
-
-            .success-modal {
-                padding: 30px 20px;
-            }
-
-            .success-modal h2 {
-                font-size: 1.3rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -897,14 +814,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .success-modal {
-                padding: 25px 18px;
-            }
-
-            .success-modal .check-icon {
-                width: 55px;
-                height: 55px;
-                font-size: 2rem;
+            .result-details {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -934,16 +845,6 @@
             }
             .option-item.selected {
                 background: #f0f0f0 !important;
-            }
-            .success-modal-overlay {
-                position: static !important;
-                background: none !important;
-                backdrop-filter: none !important;
-                display: block !important;
-            }
-            .success-modal {
-                box-shadow: none !important;
-                border: 2px solid #ddd !important;
             }
         }
 
@@ -983,34 +884,6 @@
     </div>
 
     <!-- ============================================
-    SUCCESS MODAL
-    ============================================ -->
-    <div class="success-modal-overlay" id="successModal">
-        <div class="success-modal">
-            <div class="check-icon">✅</div>
-            <h2>Submission Successful!</h2>
-            <p class="sub-message">Your examination has been submitted successfully.</p>
-
-            <div class="highlight-text">
-                <p><span class="label">📧 Results Notification:</span></p>
-                <p>Your results will be sent to your registered email address within <strong>24 hours</strong>.</p>
-                <p style="font-size:0.85rem;color:var(--text-gray);margin-top:5px;">Please check your inbox and spam folder.</p>
-            </div>
-
-            <div style="margin:15px 0; text-align:left; font-size:0.9rem;color:var(--text-gray);">
-                <p>📌 <strong>Candidate:</strong> <span id="modalCandidateName">—</span></p>
-                <p>📌 <strong>ID:</strong> <span id="modalCandidateId">—</span></p>
-                <p>📌 <strong>Email:</strong> <span id="modalCandidateEmail">—</span></p>
-            </div>
-
-            <div class="modal-footer">
-                <p>Thank you for participating in the promotion assessment.</p>
-                <button class="btn-modal" id="modalCloseBtn">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================
     MAIN CONTAINER
     ============================================ -->
     <div class="exam-container" id="examContainer">
@@ -1021,7 +894,14 @@
         <header class="exam-header">
             <div class="header-left">
                 <div class="header-logo">
-                    <img src="../images.png" alt="CRS Logo" />
+                    <!-- Cross River State Logo SVG -->
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="48" fill="#006b3f" stroke="#fdb813" stroke-width="2"/>
+                        <text x="50" y="45" font-family="Arial" font-size="28" font-weight="bold" fill="#fdb813" text-anchor="middle">CR</text>
+                        <text x="50" y="70" font-family="Arial" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">CROSS RIVER</text>
+                        <line x1="15" y1="82" x2="85" y2="82" stroke="#fdb813" stroke-width="1.5"/>
+                        <text x="50" y="92" font-family="Arial" font-size="6" fill="#ffffff" text-anchor="middle">STATE</text>
+                    </svg>
                 </div>
                 <div class="header-title">
                     <h1>Promotion Examination</h1>
@@ -1082,7 +962,13 @@
             ========================================== -->
             <div class="registration-section" id="registrationSection">
                 <div class="logo-large">
-                    <img src="../images.png" alt="CRS Logo" />
+                    <svg viewBox="0 0 100 100" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="48" fill="#006b3f" stroke="#fdb813" stroke-width="2"/>
+                        <text x="50" y="45" font-family="Arial" font-size="28" font-weight="bold" fill="#fdb813" text-anchor="middle">CR</text>
+                        <text x="50" y="70" font-family="Arial" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">CROSS RIVER</text>
+                        <line x1="15" y1="82" x2="85" y2="82" stroke="#fdb813" stroke-width="1.5"/>
+                        <text x="50" y="92" font-family="Arial" font-size="6" fill="#ffffff" text-anchor="middle">STATE</text>
+                    </svg>
                 </div>
                 <h2>Welcome to the Examination</h2>
                 <p class="sub-text">Please register to begin your promotion assessment</p>
@@ -1101,19 +987,19 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email Address <span class="required">*</span></label>
-                        <input type="email" id="email" placeholder="Enter your email" required>
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email (optional)">
                         <div class="form-error" id="emailError">Please enter a valid email address</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="comp_number">Comp Number <span class="required">*</span></label>
-                        <input type="text" id="comp_number" placeholder="Enter your comp number">
+                        <label for="comp_number">Comp Number</label>
+                        <input type="number" id="comp_number" placeholder="Enter your comp num.">
                         <div class="form-error" id="comp_numberError">Please enter your computer number</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="mda">MDA <span class="required">*</span></label>
+                        <label for="email">MDA</label>
                         <input type="text" id="mda" placeholder="Enter your MDA">
                         <div class="form-error" id="mdaError">Please enter your MDA</div>
                     </div>
@@ -1159,10 +1045,44 @@
             </div>
 
             <!-- ==========================================
-            RESULTS SECTION (Hidden - replaced by modal)
+            RESULTS SECTION
             ========================================== -->
             <div class="results-section" id="resultsSection">
-                <!-- This section is now hidden - results shown via modal -->
+                <div class="result-card">
+                    <div style="margin-bottom: 10px;">
+                        <svg viewBox="0 0 100 100" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="48" fill="#006b3f" stroke="#fdb813" stroke-width="2"/>
+                            <text x="50" y="45" font-family="Arial" font-size="28" font-weight="bold" fill="#fdb813" text-anchor="middle">CR</text>
+                            <text x="50" y="70" font-family="Arial" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle">CROSS RIVER</text>
+                            <line x1="15" y1="82" x2="85" y2="82" stroke="#fdb813" stroke-width="1.5"/>
+                            <text x="50" y="92" font-family="Arial" font-size="6" fill="#ffffff" text-anchor="middle">STATE</text>
+                        </svg>
+                    </div>
+                    <h2 style="color:var(--primary-green); margin-bottom:5px;">Examination Complete!</h2>
+                    <p style="color:var(--text-gray); margin-bottom:20px;">Thank you for participating in the promotion assessment.</p>
+
+                    <div class="score-big" id="finalScore">0</div>
+                    <div class="score-label">out of <span id="totalMarksDisplay">0</span> marks</div>
+
+                    <div class="status" id="passStatus">PASSED</div>
+
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <div class="label">Percentage</div>
+                            <div class="value" id="percentageDisplay">0%</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Questions Answered</div>
+                            <div class="value" id="answeredDisplay">0</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Pass Mark</div>
+                            <div class="value">60%</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-secondary" id="printResultsBtn" style="margin-top:20px;">🖨️ Print Results</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1176,11 +1096,8 @@
         // ============================================
         const CONFIG = {
             API_BASE: 'http://localhost:5000/api',
-            // AUTO_SAVE_INTERVAL: 30000, // 30 seconds
-            // BULK_SAVE_INTERVAL: 60000, // 60 seconds (every minute)
-            AUTO_SAVE_INTERVAL: 120000, // 120 seconds
-            BULK_SAVE_INTERVAL: 1440000, // 1440 seconds (every minute)
-
+            AUTO_SAVE_INTERVAL: 30000, // 30 seconds
+            BULK_SAVE_INTERVAL: 60000, // 60 seconds (every minute)
             CHUNK_SIZE: 50,
             ENABLE_TOOLS: true, // Set to false to disable accessibility tools
             ENABLE_AUTO_SAVE: true,
@@ -1194,7 +1111,6 @@
             userId: null,
             sessionToken: null,
             fullName: null,
-            email: null,
             questions: [],
             currentIndex: 0,
             answers: {},
@@ -1221,13 +1137,9 @@
             fullName: $('fullName'),
             phoneNumber: $('phoneNumber'),
             email: $('email'),
-            comp_number: $('comp_number'),
-            mda: $('mda'),
             fullNameError: $('fullNameError'),
             phoneError: $('phoneError'),
             emailError: $('emailError'),
-            comp_numberError: $('comp_numberError'),
-            mdaError: $('mdaError'),
             registerBtn: $('registerBtn'),
             userName: $('userName'),
             userIdDisplay: $('userIdDisplay'),
@@ -1242,12 +1154,12 @@
             prevBtn: $('prevBtn'),
             nextBtn: $('nextBtn'),
             submitBtn: $('submitBtn'),
-            // Modal
-            successModal: $('successModal'),
-            modalCandidateName: $('modalCandidateName'),
-            modalCandidateId: $('modalCandidateId'),
-            modalCandidateEmail: $('modalCandidateEmail'),
-            modalCloseBtn: $('modalCloseBtn'),
+            finalScore: $('finalScore'),
+            totalMarksDisplay: $('totalMarksDisplay'),
+            percentageDisplay: $('percentageDisplay'),
+            passStatus: $('passStatus'),
+            answeredDisplay: $('answeredDisplay'),
+            printResultsBtn: $('printResultsBtn'),
             // Toolbar
             zoomInBtn: $('zoomInBtn'),
             zoomOutBtn: $('zoomOutBtn'),
@@ -1329,38 +1241,6 @@
         }
 
         // ============================================
-        // MODAL FUNCTIONS
-        // ============================================
-        function showSuccessModal(name, userId, email) {
-            dom.modalCandidateName.textContent = name || '—';
-            dom.modalCandidateId.textContent = userId || '—';
-            dom.modalCandidateEmail.textContent = email || '—';
-            dom.successModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideSuccessModal() {
-            dom.successModal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        dom.modalCloseBtn.addEventListener('click', hideSuccessModal);
-
-        // Close modal on overlay click
-        dom.successModal.addEventListener('click', (e) => {
-            if (e.target === dom.successModal) {
-                hideSuccessModal();
-            }
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && dom.successModal.classList.contains('active')) {
-                hideSuccessModal();
-            }
-        });
-
-        // ============================================
         // API HELPERS
         // ============================================
         async function apiCall(endpoint, data = null, method = 'POST') {
@@ -1394,8 +1274,6 @@
             const fullName = dom.fullName.value.trim();
             const phoneNumber = dom.phoneNumber.value.trim();
             const email = dom.email.value.trim();
-            const compNumber = dom.comp_number.value.trim();
-            const mda = dom.mda.value.trim();
 
             if (!fullName) {
                 dom.fullName.classList.add('error');
@@ -1415,31 +1293,13 @@
                 dom.phoneError.classList.remove('show');
             }
 
-            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 dom.email.classList.add('error');
                 dom.emailError.classList.add('show');
                 valid = false;
             } else {
                 dom.email.classList.remove('error');
                 dom.emailError.classList.remove('show');
-            }
-
-            if (!compNumber) {
-                dom.comp_number.classList.add('error');
-                dom.comp_numberError.classList.add('show');
-                valid = false;
-            } else {
-                dom.comp_number.classList.remove('error');
-                dom.comp_numberError.classList.remove('show');
-            }
-
-            if (!mda) {
-                dom.mda.classList.add('error');
-                dom.mdaError.classList.add('show');
-                valid = false;
-            } else {
-                dom.mda.classList.remove('error');
-                dom.mdaError.classList.remove('show');
             }
 
             if (!valid) return;
@@ -1453,13 +1313,12 @@
                 const result = await apiCall('/register', {
                     fullName: fullName,
                     phoneNumber: phoneNumber.replace(/[^0-9]/g, ''),
-                    email: email,
+                    email: email || null,
                 });
 
                 state.userId = result.userId;
                 state.sessionToken = result.sessionToken;
                 state.fullName = result.fullName;
-                state.email = email;
 
                 // Show user info
                 dom.userName.textContent = result.fullName;
@@ -1895,7 +1754,7 @@
                 }
 
                 // Submit exam
-                await apiCall('/submit-exam', {
+                const result = await apiCall('/submit-exam', {
                     userId: state.userId,
                     sessionToken: state.sessionToken,
                 });
@@ -1903,13 +1762,10 @@
                 state.examCompleted = true;
                 clearInterval(state.timerInterval);
 
+                // Show results
+                showResults(result);
+
                 hideLoading();
-
-                // Show success modal instead of results
-                showSuccessModal(state.fullName, state.userId, state.email);
-
-                // Hide questions section
-                dom.questionsSection.classList.remove('active');
 
             } catch (error) {
                 hideLoading();
@@ -1921,6 +1777,34 @@
         }
 
         dom.submitBtn.addEventListener('click', submitExam);
+
+        // ============================================
+        // SHOW RESULTS
+        // ============================================
+        function showResults(result) {
+            dom.questionsSection.classList.remove('active');
+            dom.resultsSection.classList.add('active');
+
+            dom.finalScore.textContent = result.totalScore;
+            dom.totalMarksDisplay.textContent = result.totalMarks;
+            dom.percentageDisplay.textContent = `${result.percentageScore}%`;
+
+            const passed = result.passStatus;
+            dom.passStatus.textContent = passed ? '✅ PASSED' : '❌ FAILED';
+            dom.passStatus.className = `status ${passed ? 'passed' : 'failed'}`;
+
+            // Count answered questions
+            const answered = state.questions.filter(q => {
+                const a = state.answers[q.id];
+                return a && a.trim().length > 0;
+            }).length;
+            dom.answeredDisplay.textContent = answered;
+
+            // Print results button
+            dom.printResultsBtn.addEventListener('click', () => {
+                window.print();
+            });
+        }
 
         // ============================================
         // KEYBOARD SHORTCUT FOR SUBMIT (Ctrl+Enter)
@@ -1942,6 +1826,10 @@
         console.log(`🔄 Bulk save interval: ${CONFIG.BULK_SAVE_INTERVAL / 1000}s`);
         console.log(`📦 Max bulk saves: ${CONFIG.MAX_BULK_SAVES}`);
         console.log(`🔧 Tools: ${CONFIG.ENABLE_TOOLS ? 'Enabled' : 'Disabled'}`);
+
+        // Pre-fill phone number for demo
+        // dom.phoneNumber.value = '08012345678';
+        // dom.fullName.value = 'John Doe';
 
         console.log('✅ Ready');
     </script>

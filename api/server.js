@@ -407,7 +407,7 @@ app.post('/api/questions', async (req, res) => {
       fullName: user[0]?.full_name || '',
       examCompleted: user[0]?.exam_completed || false,
       totalQuestions: questions.length,
-      total_time: 1800, // this is in seconds...
+      total_time: 7200, // this is in seconds...
       questions: formattedQuestions
     });
     

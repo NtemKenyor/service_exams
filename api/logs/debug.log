@@ -117,3 +117,47 @@
 {"timestamp":"2026-08-06T10:50:41.635Z","level":"INFO","message":"Submit exam request for user CRSMSHE89G5JOF8","data":null}
 {"timestamp":"2026-08-06T10:50:41.672Z","level":"INFO","message":"Exam submitted for user CRSMSHE89G5JOF8: Score 0/110 (0.00%)","data":null}
 {"timestamp":"2026-08-06T10:50:41.678Z","level":"INFO","message":"Response sent: POST /api/submit-exam - 200 (43ms)","data":null}
+{"timestamp":"2026-08-14T11:42:53.502Z","level":"INFO","message":"Server started successfully on port 5000","data":null}
+{"timestamp":"2026-08-14T11:42:53.551Z","level":"INFO","message":"Database connection established successfully","data":null}
+{"timestamp":"2026-08-14T11:43:06.444Z","level":"INFO","message":"Registration attempt for: hen des (090364756274)","data":null}
+{"timestamp":"2026-08-14T11:43:06.638Z","level":"INFO","message":"Registration successful: hen des (CRSMSSVONAWMOZX)","data":null}
+{"timestamp":"2026-08-14T11:43:06.655Z","level":"INFO","message":"Response sent: POST /api/register - 201 (213ms)","data":null}
+{"timestamp":"2026-08-14T11:43:06.695Z","level":"INFO","message":"Fetching questions for user: CRSMSSVONAWMOZX","data":null}
+{"timestamp":"2026-08-14T11:43:06.763Z","level":"INFO","message":"Questions fetched successfully for user CRSMSSVONAWMOZX (10 questions)","data":null}
+{"timestamp":"2026-08-14T11:43:06.765Z","level":"INFO","message":"Response sent: POST /api/questions - 200 (72ms)","data":null}
+{"timestamp":"2026-08-14T11:53:14.567Z","level":"INFO","message":"Bulk save starting for user undefined (0 answers)","data":null}
+{"timestamp":"2026-08-14T11:53:14.575Z","level":"WARN","message":"Bulk save failed: Missing credentials","data":null}
+{"timestamp":"2026-08-14T11:53:14.589Z","level":"INFO","message":"Response sent: POST /api/bulk-save-answers - 400 (33ms)","data":null}
+{"timestamp":"2026-08-14T11:53:49.194Z","level":"INFO","message":"Registration attempt for: HEN MARK (09064756234)","data":null}
+{"timestamp":"2026-08-14T11:53:49.234Z","level":"INFO","message":"Registration successful: HEN MARK (CRSMSSW2F8330ME)","data":null}
+{"timestamp":"2026-08-14T11:53:49.241Z","level":"INFO","message":"Response sent: POST /api/register - 201 (48ms)","data":null}
+{"timestamp":"2026-08-14T11:53:49.287Z","level":"INFO","message":"Fetching questions for user: CRSMSSW2F8330ME","data":null}
+{"timestamp":"2026-08-14T11:53:49.308Z","level":"INFO","message":"Questions fetched successfully for user CRSMSSW2F8330ME (30 questions)","data":null}
+{"timestamp":"2026-08-14T11:53:49.314Z","level":"INFO","message":"Response sent: POST /api/questions - 200 (28ms)","data":null}
+{"timestamp":"2026-08-14T11:53:53.712Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 1","data":null}
+{"timestamp":"2026-08-14T11:53:53.734Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 1, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:53:53.737Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (27ms)","data":null}
+{"timestamp":"2026-08-14T11:53:57.440Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 2","data":null}
+{"timestamp":"2026-08-14T11:53:57.466Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 2, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:53:57.467Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (27ms)","data":null}
+{"timestamp":"2026-08-14T11:54:00.630Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 3","data":null}
+{"timestamp":"2026-08-14T11:54:00.649Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 3, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:54:00.652Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (22ms)","data":null}
+{"timestamp":"2026-08-14T11:54:02.778Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 37","data":null}
+{"timestamp":"2026-08-14T11:54:02.802Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 37, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:54:02.804Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (26ms)","data":null}
+{"timestamp":"2026-08-14T11:54:05.253Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 38","data":null}
+{"timestamp":"2026-08-14T11:54:05.282Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 38, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:54:05.286Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (34ms)","data":null}
+{"timestamp":"2026-08-14T11:54:08.884Z","level":"INFO","message":"Saving answer for user CRSMSSW2F8330ME, question 39","data":null}
+{"timestamp":"2026-08-14T11:54:08.904Z","level":"INFO","message":"Answer saved: User CRSMSSW2F8330ME, Question 39, Score 0/5","data":null}
+{"timestamp":"2026-08-14T11:54:08.907Z","level":"INFO","message":"Response sent: POST /api/save-answer - 200 (23ms)","data":null}
+{"timestamp":"2026-08-14T11:54:49.405Z","level":"INFO","message":"Bulk save starting for user CRSMSSW2F8330ME (6 answers)","data":null}
+{"timestamp":"2026-08-14T11:54:49.446Z","level":"INFO","message":"Bulk save completed: 6 answers saved for user CRSMSSW2F8330ME","data":null}
+{"timestamp":"2026-08-14T11:54:49.463Z","level":"INFO","message":"Response sent: POST /api/bulk-save-answers - 200 (58ms)","data":null}
+{"timestamp":"2026-08-14T11:55:30.613Z","level":"INFO","message":"Bulk save starting for user CRSMSSW2F8330ME (6 answers)","data":null}
+{"timestamp":"2026-08-14T11:55:30.632Z","level":"INFO","message":"Bulk save completed: 6 answers saved for user CRSMSSW2F8330ME","data":null}
+{"timestamp":"2026-08-14T11:55:30.644Z","level":"INFO","message":"Response sent: POST /api/bulk-save-answers - 200 (31ms)","data":null}
+{"timestamp":"2026-08-14T11:55:30.670Z","level":"INFO","message":"Submit exam request for user CRSMSSW2F8330ME","data":null}
+{"timestamp":"2026-08-14T11:55:30.715Z","level":"INFO","message":"Exam submitted for user CRSMSSW2F8330ME: Score 0/310 (0.00%)","data":null}
+{"timestamp":"2026-08-14T11:55:30.719Z","level":"INFO","message":"Response sent: POST /api/submit-exam - 200 (51ms)","data":null}
