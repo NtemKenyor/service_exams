@@ -1,4 +1,6 @@
 *.env
 api/.env
 api/node_modules
+api/log/*
+
 
