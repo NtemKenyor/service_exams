@@ -426,6 +426,90 @@ app.post('/api/register', async (req, res) => {
 });
 
 // 2. Get all questions for a user
+// app.post('/api/questions', async (req, res) => {
+//   try {
+//     const { userId, sessionToken } = req.body;
+    
+//     logger.info(`Fetching questions for user: ${userId}`);
+    
+//     if (!userId || !sessionToken) {
+//       logger.warn(`Questions fetch failed: Missing credentials`);
+//       return res.status(400).json({ 
+//         success: false, 
+//         message: 'User ID and session token are required' 
+//       });
+//     }
+    
+//     const [session] = await pool.query(
+//       'SELECT * FROM exam_sessions WHERE user_id = ? AND session_token = ? AND is_active = TRUE',
+//       [userId, sessionToken]
+//     );
+    
+//     if (session.length === 0) {
+//       logger.warn(`Questions fetch failed: Invalid session for user ${userId}`);
+//       return res.status(401).json({ 
+//         success: false, 
+//         message: 'Invalid or expired session' 
+//       });
+//     }
+    
+//     const [questions] = await pool.query(
+//       `SELECT id, section, question_number, question_text, question_type, marks, options 
+//        FROM questions 
+//        ORDER BY section, question_number`
+//     );
+    
+//     const [answers] = await pool.query(
+//       'SELECT question_id, answer_text FROM user_answers WHERE user_id = ?',
+//       [userId]
+//     );
+    
+//     const answerMap = new Map();
+//     answers.forEach(a => {
+//       answerMap.set(a.question_id, a.answer_text);
+//     });
+    
+//     const formattedQuestions = questions.map(q => ({
+//       id: q.id,
+//       section: q.section,
+//       questionNumber: q.question_number,
+//       questionText: q.question_text,
+//       questionType: q.question_type,
+//       marks: q.marks,
+//       options: safeJSONParse(q.options),
+//       answer: answerMap.get(q.id) || '',
+//       isAnswered: answerMap.has(q.id)
+//     }));
+    
+//     const [user] = await pool.query(
+//       'SELECT full_name, exam_completed FROM users WHERE user_id = ?',
+//       [userId]
+//     );
+    
+//     logger.info(`Questions fetched successfully for user ${userId} (${questions.length} questions)`);
+    
+//     res.json({
+//       success: true,
+//       userId: userId,
+//       fullName: user[0]?.full_name || '',
+//       examCompleted: user[0]?.exam_completed || false,
+//       totalQuestions: questions.length,
+//       total_time: 1800, // this is in seconds...
+//       show_result: true,
+//       questions: formattedQuestions
+//     });
+    
+//   } catch (error) {
+//     logger.error('Error fetching questions', error);
+//     res.status(500).json({ 
+//       success: false, 
+//       message: 'Failed to fetch questions', 
+//       error: error.message 
+//     });
+//   }
+// });
+
+// 2. Get all questions for a user - with random selection
 app.post('/api/questions', async (req, res) => {
   try {
     const { userId, sessionToken } = req.body;
@@ -453,12 +537,86 @@ app.post('/api/questions', async (req, res) => {
       });
     }
     
-    const [questions] = await pool.query(
+    // ============================================
+    // RANDOM QUESTION SELECTION
+    // ============================================
+    // Define the number of questions needed per type
+    const QUESTION_CONFIG = {
+      objective: 7,
+      subjective: 8,
+      theory: 5,
+      scenario: 0,   // Not included in random selection
+      letter: 0,     // Not included in random selection
+      case_study: 0  // Not included in random selection
+    };
+    
+    // Fetch all questions grouped by type
+    const [allQuestions] = await pool.query(
       `SELECT id, section, question_number, question_text, question_type, marks, options 
        FROM questions 
-       ORDER BY section, question_number`
+       WHERE question_type IN ('objective', 'subjective', 'theory')
+       ORDER BY question_type, RAND()`
     );
     
+    // Group questions by type
+    const questionsByType = {
+      objective: [],
+      subjective: [],
+      theory: []
+    };
+    
+    allQuestions.forEach(q => {
+      if (questionsByType[q.question_type]) {
+        questionsByType[q.question_type].push(q);
+      }
+    });
+    
+    // Log available questions count
+    logger.info(`Available questions - Objective: ${questionsByType.objective.length}, Subjective: ${questionsByType.subjective.length}, Theory: ${questionsByType.theory.length}`);
+    
+    // Select random questions from each type
+    const selectedQuestions = [];
+    
+    // Helper function to get random items from array
+    function getRandomItems(arr, count) {
+      if (!arr || arr.length === 0) return [];
+      const shuffled = [...arr];
+      // Fisher-Yates shuffle
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled.slice(0, Math.min(count, shuffled.length));
+    }
+    
+    // Select objective questions
+    const objectiveQuestions = getRandomItems(questionsByType.objective, QUESTION_CONFIG.objective);
+    selectedQuestions.push(...objectiveQuestions);
+    logger.info(`Selected ${objectiveQuestions.length} objective questions`);
+    
+    // Select subjective questions
+    const subjectiveQuestions = getRandomItems(questionsByType.subjective, QUESTION_CONFIG.subjective);
+    selectedQuestions.push(...subjectiveQuestions);
+    logger.info(`Selected ${subjectiveQuestions.length} subjective questions`);
+    
+    // Select theory questions
+    const theoryQuestions = getRandomItems(questionsByType.theory, QUESTION_CONFIG.theory);
+    selectedQuestions.push(...theoryQuestions);
+    logger.info(`Selected ${theoryQuestions.length} theory questions`);
+    
+    // If not enough questions, log warning
+    const totalNeeded = QUESTION_CONFIG.objective + QUESTION_CONFIG.subjective + QUESTION_CONFIG.theory;
+    if (selectedQuestions.length < totalNeeded) {
+      logger.warn(`Not enough questions available. Need ${totalNeeded}, have ${selectedQuestions.length}`);
+    }
+    
+    // Sort selected questions by section and question_number for consistent display
+    selectedQuestions.sort((a, b) => {
+      if (a.section !== b.section) return a.section.localeCompare(b.section);
+      return a.question_number - b.question_number;
+    });
+    
+    // Get user's existing answers
     const [answers] = await pool.query(
       'SELECT question_id, answer_text FROM user_answers WHERE user_id = ?',
       [userId]
@@ -469,7 +627,8 @@ app.post('/api/questions', async (req, res) => {
       answerMap.set(a.question_id, a.answer_text);
     });
     
-    const formattedQuestions = questions.map(q => ({
+    // Format questions for response
+    const formattedQuestions = selectedQuestions.map(q => ({
       id: q.id,
       section: q.section,
       questionNumber: q.question_number,
@@ -486,17 +645,24 @@ app.post('/api/questions', async (req, res) => {
       [userId]
     );
     
-    logger.info(`Questions fetched successfully for user ${userId} (${questions.length} questions)`);
+    logger.info(`Questions fetched successfully for user ${userId} (${formattedQuestions.length} questions)`);
     
     res.json({
       success: true,
       userId: userId,
       fullName: user[0]?.full_name || '',
       examCompleted: user[0]?.exam_completed || false,
-      totalQuestions: questions.length,
-      total_time: 1800, // this is in seconds...
+      totalQuestions: formattedQuestions.length,
+      total_time: 1800, // 2 hours in seconds
       show_result: true,
-      questions: formattedQuestions
+      questions: formattedQuestions,
+      // Optional: Include selection metadata
+      selectionMetadata: {
+        objective: objectiveQuestions.length,
+        subjective: subjectiveQuestions.length,
+        theory: theoryQuestions.length,
+        total: formattedQuestions.length
+      }
     });
     
   } catch (error) {
