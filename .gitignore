@@ -3,3 +3,5 @@ api/.env
 api/node_modules
 api/log/*
 api/log
+api/logs_dir
+api/logs_dir/*

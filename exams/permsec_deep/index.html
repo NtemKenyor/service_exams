@@ -1632,7 +1632,7 @@
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
                 return '/images.png';
             }
-            return `http://${hostname}/images.png`;
+            return `http://${hostname}:8080/images.png`;
         };
 
         const CONFIG = {

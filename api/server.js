@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 // ============================================
 // LOGGING SETUP
 // ============================================
-const LOG_DIR = path.join(__dirname, 'logs');
+const LOG_DIR = path.join(__dirname, 'logs_dir');
 
 // Create logs directory if it doesn't exist
 if (!fs.existsSync(LOG_DIR)) {
@@ -1443,7 +1443,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   📍 Network Access: http://${localIP}:${PORT}`);
   console.log(`   🌐 CORS:          Fully open (all origins allowed)`);
   console.log(`   📚 Database:      ${process.env.DB_NAME}`);
-  console.log(`   📝 Logs:          ./logs/ (access.log, error.log, debug.log)`);
+  console.log(`   📝 Logs:          ./logs_dir/ (access.log, error.log, debug.log)`);
   console.log(`   ✅ Status:        Running`);
   console.log(`\n${'='.repeat(55)}`);
   console.log(`\n📱 Other devices on your network can access at:`);
@@ -1451,9 +1451,9 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🔧 Test with curl:`);
   console.log(`   curl http://${localIP}:${PORT}/api/health`);
   console.log(`\n📝 View logs:`);
-  console.log(`   tail -f logs/access.log`);
-  console.log(`   tail -f logs/error.log`);
-  console.log(`   tail -f logs/debug.log\n`);
+  console.log(`   tail -f logs_dir/access.log`);
+  console.log(`   tail -f logs_dir/error.log`);
+  console.log(`   tail -f logs_dir/debug.log\n`);
   
   logger.info(`Server started successfully on port ${PORT}`);
 });
