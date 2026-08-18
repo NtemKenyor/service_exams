@@ -542,9 +542,9 @@ app.post('/api/questions', async (req, res) => {
     // ============================================
     // Define the number of questions needed per type
     const QUESTION_CONFIG = {
-      objective: 7,
-      subjective: 8,
-      theory: 5,
+      objective: 9,
+      subjective: 3,
+      theory: 3,
       scenario: 0,   // Not included in random selection
       letter: 0,     // Not included in random selection
       case_study: 0  // Not included in random selection
