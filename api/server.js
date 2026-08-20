@@ -538,83 +538,128 @@ app.post('/api/questions', async (req, res) => {
     }
     
     // ============================================
-    // RANDOM QUESTION SELECTION
+    // QUESTION ALLOCATION (persisted per user)
     // ============================================
-    // Define the number of questions needed per type
-    const QUESTION_CONFIG = {
-      objective: 9,
-      subjective: 3,
-      theory: 3,
-      scenario: 0,   // Not included in random selection
-      letter: 0,     // Not included in random selection
-      case_study: 0  // Not included in random selection
-    };
-    
-    // Fetch all questions grouped by type
-    const [allQuestions] = await pool.query(
-      `SELECT id, section, question_number, question_text, question_type, marks, options 
-       FROM questions 
-       WHERE question_type IN ('objective', 'subjective', 'theory')
-       ORDER BY question_type, RAND()`
+    // Check whether this user already has a saved allocation (e.g. they
+    // refreshed the page or re-entered the same-day exam). If so, we MUST
+    // reuse the exact same questions and total marks — re-randomizing on
+    // every fetch is what let the total-marks figure drift away from what
+    // the candidate was actually scored against.
+    const [userRow] = await pool.query(
+      'SELECT full_name, exam_completed, allocated_question_ids, total_allocated_marks FROM users WHERE user_id = ?',
+      [userId]
     );
     
-    // Group questions by type
-    const questionsByType = {
-      objective: [],
-      subjective: [],
-      theory: []
-    };
-    
-    allQuestions.forEach(q => {
-      if (questionsByType[q.question_type]) {
-        questionsByType[q.question_type].push(q);
-      }
-    });
-    
-    // Log available questions count
-    logger.info(`Available questions - Objective: ${questionsByType.objective.length}, Subjective: ${questionsByType.subjective.length}, Theory: ${questionsByType.theory.length}`);
-    
-    // Select random questions from each type
-    const selectedQuestions = [];
-    
-    // Helper function to get random items from array
-    function getRandomItems(arr, count) {
-      if (!arr || arr.length === 0) return [];
-      const shuffled = [...arr];
-      // Fisher-Yates shuffle
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      return shuffled.slice(0, Math.min(count, shuffled.length));
+    if (userRow.length === 0) {
+      logger.warn(`Questions fetch failed: User ${userId} not found`);
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
     }
     
-    // Select objective questions
-    const objectiveQuestions = getRandomItems(questionsByType.objective, QUESTION_CONFIG.objective);
-    selectedQuestions.push(...objectiveQuestions);
-    logger.info(`Selected ${objectiveQuestions.length} objective questions`);
+    const user = userRow[0];
+    let selectedQuestions = [];
+    let objectiveCount = 0, subjectiveCount = 0, theoryCount = 0;
+    let totalAllocatedMarks;
     
-    // Select subjective questions
-    const subjectiveQuestions = getRandomItems(questionsByType.subjective, QUESTION_CONFIG.subjective);
-    selectedQuestions.push(...subjectiveQuestions);
-    logger.info(`Selected ${subjectiveQuestions.length} subjective questions`);
+    const existingIds = safeJSONParse(user.allocated_question_ids);
     
-    // Select theory questions
-    const theoryQuestions = getRandomItems(questionsByType.theory, QUESTION_CONFIG.theory);
-    selectedQuestions.push(...theoryQuestions);
-    logger.info(`Selected ${theoryQuestions.length} theory questions`);
-    
-    // If not enough questions, log warning
-    const totalNeeded = QUESTION_CONFIG.objective + QUESTION_CONFIG.subjective + QUESTION_CONFIG.theory;
-    if (selectedQuestions.length < totalNeeded) {
-      logger.warn(`Not enough questions available. Need ${totalNeeded}, have ${selectedQuestions.length}`);
+    if (existingIds && Array.isArray(existingIds) && existingIds.length > 0) {
+      // ---- Reuse the previously allocated question set ----
+      const placeholders = existingIds.map(() => '?').join(',');
+      const [rows] = await pool.query(
+        `SELECT id, section, question_number, question_text, question_type, marks, options 
+         FROM questions WHERE id IN (${placeholders})`,
+        existingIds
+      );
+      
+      // Preserve original allocation order/count even if a question was
+      // later deleted from the bank (defensive, shouldn't normally happen)
+      const rowMap = new Map(rows.map(r => [r.id, r]));
+      selectedQuestions = existingIds.map(id => rowMap.get(id)).filter(Boolean);
+      
+      selectedQuestions.forEach(q => {
+        if (q.question_type === 'objective') objectiveCount++;
+        else if (q.question_type === 'subjective') subjectiveCount++;
+        else if (q.question_type === 'theory') theoryCount++;
+      });
+      
+      totalAllocatedMarks = user.total_allocated_marks 
+        ?? selectedQuestions.reduce((sum, q) => sum + q.marks, 0);
+      
+      logger.info(`Reusing existing allocation for user ${userId} (${selectedQuestions.length} questions, ${totalAllocatedMarks} marks)`);
+      
+    } else {
+      // ---- First time: randomly select and PERSIST the allocation ----
+      const QUESTION_CONFIG = {
+        objective: 9,
+        subjective: 3,
+        theory: 3,
+        scenario: 0,   // Not included in random selection
+        letter: 0,     // Not included in random selection
+        case_study: 0  // Not included in random selection
+      };
+      
+      const [allQuestions] = await pool.query(
+        `SELECT id, section, question_number, question_text, question_type, marks, options 
+         FROM questions 
+         WHERE question_type IN ('objective', 'subjective', 'theory')
+         ORDER BY question_type, RAND()`
+      );
+      
+      const questionsByType = { objective: [], subjective: [], theory: [] };
+      allQuestions.forEach(q => {
+        if (questionsByType[q.question_type]) {
+          questionsByType[q.question_type].push(q);
+        }
+      });
+      
+      logger.info(`Available questions - Objective: ${questionsByType.objective.length}, Subjective: ${questionsByType.subjective.length}, Theory: ${questionsByType.theory.length}`);
+      
+      function getRandomItems(arr, count) {
+        if (!arr || arr.length === 0) return [];
+        const shuffled = [...arr];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, Math.min(count, shuffled.length));
+      }
+      
+      const objectiveQuestions = getRandomItems(questionsByType.objective, QUESTION_CONFIG.objective);
+      const subjectiveQuestions = getRandomItems(questionsByType.subjective, QUESTION_CONFIG.subjective);
+      const theoryQuestions = getRandomItems(questionsByType.theory, QUESTION_CONFIG.theory);
+      
+      selectedQuestions = [...objectiveQuestions, ...subjectiveQuestions, ...theoryQuestions];
+      objectiveCount = objectiveQuestions.length;
+      subjectiveCount = subjectiveQuestions.length;
+      theoryCount = theoryQuestions.length;
+      
+      logger.info(`Selected ${objectiveCount} objective, ${subjectiveCount} subjective, ${theoryCount} theory questions`);
+      
+      const totalNeeded = QUESTION_CONFIG.objective + QUESTION_CONFIG.subjective + QUESTION_CONFIG.theory;
+      if (selectedQuestions.length < totalNeeded) {
+        logger.warn(`Not enough questions available. Need ${totalNeeded}, have ${selectedQuestions.length}`);
+      }
+      
+      selectedQuestions.sort((a, b) => {
+        if (a.section !== b.section) return a.section.localeCompare(b.section);
+        return a.question_number - b.question_number;
+      });
+      
+      totalAllocatedMarks = selectedQuestions.reduce((sum, q) => sum + q.marks, 0);
+      const allocatedIds = selectedQuestions.map(q => q.id);
+      
+      // Persist the allocation so every later fetch/save/submit for this
+      // user is scored against exactly these questions and this total.
+      await pool.query(
+        'UPDATE users SET allocated_question_ids = ?, total_allocated_marks = ? WHERE user_id = ?',
+        [JSON.stringify(allocatedIds), totalAllocatedMarks, userId]
+      );
+      
+      logger.info(`New allocation saved for user ${userId}: ${allocatedIds.length} questions, ${totalAllocatedMarks} total marks`);
     }
-    
-    // Sort selected questions by section and question_number for consistent display
-    selectedQuestions.sort((a, b) => {
-      if (a.section !== b.section) return a.section.localeCompare(b.section);
-      return a.question_number - b.question_number;
-    });
     
     // Get user's existing answers
     const [answers] = await pool.query(
@@ -640,27 +685,23 @@ app.post('/api/questions', async (req, res) => {
       isAnswered: answerMap.has(q.id)
     }));
     
-    const [user] = await pool.query(
-      'SELECT full_name, exam_completed FROM users WHERE user_id = ?',
-      [userId]
-    );
-    
     logger.info(`Questions fetched successfully for user ${userId} (${formattedQuestions.length} questions)`);
     
     res.json({
       success: true,
       userId: userId,
-      fullName: user[0]?.full_name || '',
-      examCompleted: user[0]?.exam_completed || false,
+      fullName: user.full_name || '',
+      examCompleted: user.exam_completed || false,
       totalQuestions: formattedQuestions.length,
       total_time: 1800, // 2 hours in seconds
       show_result: true,
       questions: formattedQuestions,
+      totalMarks: totalAllocatedMarks,
       // Optional: Include selection metadata
       selectionMetadata: {
-        objective: objectiveQuestions.length,
-        subjective: subjectiveQuestions.length,
-        theory: theoryQuestions.length,
+        objective: objectiveCount,
+        subjective: subjectiveCount,
+        theory: theoryCount,
         total: formattedQuestions.length
       }
     });
@@ -992,7 +1033,7 @@ app.post('/api/bulk-submit-exam', async (req, res) => {
     
     // Check if already submitted
     const [user] = await pool.query(
-      'SELECT exam_completed FROM users WHERE user_id = ?',
+      'SELECT exam_completed, allocated_question_ids, total_allocated_marks FROM users WHERE user_id = ?',
       [userId]
     );
     
@@ -1092,20 +1133,39 @@ app.post('/api/bulk-submit-exam', async (req, res) => {
       }
     }
     
-    // Calculate final score
-    const [scoreResult] = await pool.query(
-      'SELECT SUM(score) as total_score FROM user_answers WHERE user_id = ?',
-      [userId]
-    );
+    // Calculate final score against the total marks saved at allocation
+    // time (/api/questions), counting only questions actually allocated to
+    // this user — not a sum derived from whichever subset of questions
+    // happens to have a row in user_answers.
+    const allocatedIds = safeJSONParse(user[0]?.allocated_question_ids) || [];
     
-    const totalScore = scoreResult[0]?.total_score || 0;
+    let totalScore = 0;
+    let totalMarks = user[0]?.total_allocated_marks;
     
-    // Get total marks
-    const [questions] = await pool.query(
-      'SELECT SUM(marks) as total_marks FROM questions'
-    );
+    if (allocatedIds.length > 0) {
+      const placeholders = allocatedIds.map(() => '?').join(',');
+      const [scoreRows] = await pool.query(
+        `SELECT score FROM user_answers WHERE user_id = ? AND question_id IN (${placeholders})`,
+        [userId, ...allocatedIds]
+      );
+      scoreRows.forEach(a => { totalScore += a.score || 0; });
+    } else {
+      // Fallback for users who registered before allocation persistence
+      // was added and have no allocated_question_ids saved.
+      logger.warn(`User ${userId} has no persisted allocation; falling back to all saved answers`);
+      const [scoreRows] = await pool.query(
+        'SELECT score, max_possible_score FROM user_answers WHERE user_id = ?',
+        [userId]
+      );
+      let fallbackMarks = 0;
+      scoreRows.forEach(a => {
+        totalScore += a.score || 0;
+        fallbackMarks += a.max_possible_score || 0;
+      });
+      totalMarks = totalMarks || fallbackMarks;
+    }
     
-    const totalMarks = questions[0]?.total_marks || 100;
+    if (!totalMarks) totalMarks = 100; // last-resort fallback
     const percentageScore = (totalScore / totalMarks) * 100;
     const passStatus = percentageScore >= 60;
     
@@ -1178,7 +1238,7 @@ app.post('/api/submit-exam', async (req, res) => {
     }
     
     const [user] = await pool.query(
-      'SELECT exam_completed FROM users WHERE user_id = ?',
+      'SELECT exam_completed, allocated_question_ids, total_allocated_marks FROM users WHERE user_id = ?',
       [userId]
     );
     
@@ -1190,21 +1250,40 @@ app.post('/api/submit-exam', async (req, res) => {
       });
     }
     
-    const [answers] = await pool.query(
-      'SELECT score FROM user_answers WHERE user_id = ?',
-      [userId]
-    );
+    // Only count answers for questions that were actually allocated to this
+    // user, and use the total marks saved at allocation time (from
+    // /api/questions) as the denominator — not a sum derived from whatever
+    // subset of questions happens to have a row in user_answers. This is
+    // what stops "answer 1 question correctly = 100%".
+    const allocatedIds = safeJSONParse(user[0]?.allocated_question_ids) || [];
     
     let totalScore = 0;
-    answers.forEach(a => {
-      totalScore += a.score || 0;
-    });
+    let totalMarks = user[0]?.total_allocated_marks;
     
-    const [questions] = await pool.query(
-      'SELECT SUM(marks) as total_marks FROM questions'
-    );
+    if (allocatedIds.length > 0) {
+      const placeholders = allocatedIds.map(() => '?').join(',');
+      const [answers] = await pool.query(
+        `SELECT score FROM user_answers WHERE user_id = ? AND question_id IN (${placeholders})`,
+        [userId, ...allocatedIds]
+      );
+      answers.forEach(a => { totalScore += a.score || 0; });
+    } else {
+      // Fallback for users who registered before allocation persistence
+      // was added and have no allocated_question_ids saved.
+      logger.warn(`User ${userId} has no persisted allocation; falling back to all saved answers`);
+      const [answers] = await pool.query(
+        'SELECT score, max_possible_score FROM user_answers WHERE user_id = ?',
+        [userId]
+      );
+      let fallbackMarks = 0;
+      answers.forEach(a => {
+        totalScore += a.score || 0;
+        fallbackMarks += a.max_possible_score || 0;
+      });
+      totalMarks = totalMarks || fallbackMarks;
+    }
     
-    const totalMarks = questions[0]?.total_marks || 100;
+    if (!totalMarks) totalMarks = 100; // last-resort fallback
     const percentageScore = (totalScore / totalMarks) * 100;
     const passStatus = percentageScore >= 60;
     
